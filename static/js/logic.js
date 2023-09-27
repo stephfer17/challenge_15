@@ -5,13 +5,14 @@ let queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_mo
     // Once we get a response, send the data.features object to the createFeatures function.
     createFeatures(data.features);
   });
-  // Function to determine marker color by depth
-function chooseColor(depth){
-  if (depth < 10) return "#00FF00";
-  else if (depth < 30) return "blue";
-  else if (depth < 50) return "yellow";
-  else if (depth < 70) return "orange";
-  else if (depth < 90) return "red";
+  // Function to determine marker colour by scale
+  // AskBSC helped with the code colours 
+function chooseColor(scale){
+  if (scale < 10) return "#98EE00";
+  else if (scale < 30) return "#D4EE00";
+  else if (scale < 50) return "#EECC00";
+  else if (scale < 70) return "#EE9C00";
+  else if (scale < 90) return "#EA2C2C";
   else return "#FF0000";
 }
 
@@ -83,4 +84,32 @@ let myMap = L.map("map", {
 L.control.layers(baseMaps, overlayMaps, {
   collapsed: false
 }).addTo(myMap)
-};
+// adding the legdgen 
+// got the code from here https://gis.stackexchange.com/questions/133630/adding-leaflet-legend
+// AskBsc helped here and the respetive css part for the legend
+let legend = L.control({
+    position: "bottomright"
+  });
+  legend.onAdd = function () {
+    let div = L.DomUtil.create("div", "info legend");
+    let grades = [-10, 10, 30, 50, 70, 90];
+    let colors = [
+      "#98EE00",
+      "#D4EE00",
+      "#EECC00",
+      "#EE9C00",
+      "#EA822C",
+      "#EA2C2C"];
+    // Loop through our intervals and generate a label with a colored square for each interval.
+    for (let i = 0; i < grades.length; i++) {
+      div.innerHTML += "<i style='background: "
+        + colors[i]
+        + "'></i> "
+        + grades[i]
+        + (grades[i + 1] ? "&ndash;" + grades[i + 1] + "<br>" : "+");
+    }
+    return div;
+  };
+  // We add our legend to the map.
+  legend.addTo(myMap)
+  };
